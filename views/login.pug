@@ -43,6 +43,11 @@ head
       font-size: 14px;
       box-sizing: border-box;
       transition: border-color 0.2s;
+      outline: none;
+    }
+    /* Green border only when focused (typing) */
+    input:focus {
+      border-color: #10b981;
     }
     input.error {
       border-color: #dc2626;
@@ -93,11 +98,11 @@ body
     form(id='loginForm' action='/login' method='POST')
       .field
         label Email
-        input(type='email' id='email' name='email')
+        input(type='email' id='email' name='email' placeholder='Enter your email')
       
       .field
         label Password
-        input(type='password' id='password' name='password')
+        input(type='password' id='password' name='password' placeholder='Password')
       
       button(type='submit') LOGIN
       
@@ -112,6 +117,7 @@ script.
     const allInputs = document.querySelectorAll('input');
     allInputs.forEach(input => {
       input.classList.remove('error');
+      input.style.borderColor = '#3bd7cf';
     });
   }
   
@@ -119,9 +125,11 @@ script.
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!field.value.trim()) {
       field.classList.add('error');
+      field.style.borderColor = '#dc2626';
       return false;
     } else if (!emailRegex.test(field.value.trim())) {
       field.classList.add('error');
+      field.style.borderColor = '#dc2626';
       return false;
     } else {
       field.classList.remove('error');
@@ -132,6 +140,7 @@ script.
   function validateField(field) {
     if (!field.value.trim()) {
       field.classList.add('error');
+      field.style.borderColor = '#dc2626';
       return false;
     } else {
       field.classList.remove('error');
@@ -143,26 +152,34 @@ script.
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (this.value.trim() && emailRegex.test(this.value.trim())) {
       this.classList.remove('error');
+      this.style.borderColor = '#10b981';
     } else if (this.value.trim()) {
       this.classList.add('error');
+      this.style.borderColor = '#dc2626';
     } else {
       this.classList.remove('error');
+      this.style.borderColor = '#3bd7cf';
     }
   });
   
   document.getElementById('password').addEventListener('input', function() {
     if (this.value.trim()) {
       this.classList.remove('error');
+      this.style.borderColor = '#10b981';
+    } else {
+      this.classList.remove('error');
+      this.style.borderColor = '#3bd7cf';
     }
   });
   
   form.addEventListener('submit', function(event) {
-    clearAllErrors();
-    
     let isValid = true;
     
-    if (!validateEmail(document.getElementById('email'))) isValid = false;
-    if (!validateField(document.getElementById('password'))) isValid = false;
+    const emailField = document.getElementById('email');
+    const passwordField = document.getElementById('password');
+    
+    if (!validateEmail(emailField)) isValid = false;
+    if (!validateField(passwordField)) isValid = false;
     
     if (!isValid) {
       event.preventDefault();
