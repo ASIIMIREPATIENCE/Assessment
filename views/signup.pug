@@ -1,0 +1,243 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Signup Form
+  style.
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    .signup-box {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 350px;
+      position: relative;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: normal;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .field {
+      margin-bottom: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #32d0cb;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input:focus, input:not(:placeholder-shown) {
+      border-color: #10b981;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #32d0cb;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: purple;
+    }
+    .login-link {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .login-link a {
+      color: #2f87da;
+      text-decoration: none;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    .success-message {
+      background-color: #109a47;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+body
+  .signup-box
+    // Success message at the top (as shown in your image)
+    if success
+      .success-message #{success}
+    
+    h1 Signup
+    
+    form(id='signupForm' action='/signup' method='POST')
+      .field
+        input(type='text' id='fullname' name='fullname' placeholder='Full Name')
+      
+      .field
+        input(type='email' id='email' name='email' placeholder='Email')
+      
+      .field
+        input(type='tel' id='phone' name='phone' placeholder='Phone Number' maxlength='13')
+      
+      .field
+        input(type='password' id='password' name='password' placeholder='Password')
+      
+      .field
+        input(type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password')
+      
+      button(type='submit') SIGNUP
+      
+      .login-link
+        | Have an account? 
+        a(href='/login') -Login
+
+script.
+  const form = document.getElementById('signupForm');
+  
+  function validateField(field) {
+    if (!field.value.trim()) {
+      field.style.borderColor = '#dc2626';
+      return false;
+    } else {
+      field.style.borderColor = '#10b981';
+      return true;
+    }
+  }
+  
+  function validateEmail(field) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!field.value.trim()) {
+      field.style.borderColor = '#dc2626';
+      return false;
+    } else if (!emailRegex.test(field.value.trim())) {
+      field.style.borderColor = '#dc2626';
+      return false;
+    } else {
+      field.style.borderColor = '#10b981';
+      return true;
+    }
+  }
+  
+  function validatePhone(field) {
+    const phoneRegex = /^\+256[0-9]{9}$/;
+    if (!field.value.trim()) {
+      field.style.borderColor = '#dc2626';
+      return false;
+    } else if (!phoneRegex.test(field.value.trim())) {
+      field.style.borderColor = '#dc2626';
+      return false;
+    } else {
+      field.style.borderColor = '#10b981';
+      return true;
+    }
+  }
+  
+  function validatePasswordMatch(passwordField, confirmField) {
+    if (!confirmField.value.trim()) {
+      confirmField.style.borderColor = '#dc2626';
+      return false;
+    } else if (passwordField.value !== confirmField.value) {
+      passwordField.style.borderColor = '#dc2626';
+      confirmField.style.borderColor = '#dc2626';
+      return false;
+    } else {
+      passwordField.style.borderColor = '#10b981';
+      confirmField.style.borderColor = '#10b981';
+      return true;
+    }
+  }
+  
+  document.getElementById('fullname').addEventListener('input', function() {
+    if (this.value.trim()) {
+      this.style.borderColor = '#10b981';
+    } else {
+      this.style.borderColor = '#32d0cb';
+    }
+  });
+  
+  document.getElementById('email').addEventListener('input', function() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (this.value.trim() && emailRegex.test(this.value.trim())) {
+      this.style.borderColor = '#10b981';
+    } else if (this.value.trim()) {
+      this.style.borderColor = '#dc2626';
+    } else {
+      this.style.borderColor = '#32d0cb';
+    }
+  });
+  
+  document.getElementById('phone').addEventListener('input', function() {
+    const phoneRegex = /^\+256[0-9]{9}$/;
+    if (this.value.trim() && phoneRegex.test(this.value.trim())) {
+      this.style.borderColor = '#10b981';
+    } else if (this.value.trim()) {
+      this.style.borderColor = '#dc2626';
+    } else {
+      this.style.borderColor = '#32d0cb';
+    }
+  });
+  
+  document.getElementById('password').addEventListener('input', function() {
+    if (this.value.trim()) {
+      this.style.borderColor = '#10b981';
+    } else {
+      this.style.borderColor = '#32d0cb';
+    }
+    const confirmField = document.getElementById('confirmPassword');
+    if (confirmField.value.trim()) {
+      if (this.value === confirmField.value) {
+        this.style.borderColor = '#10b981';
+        confirmField.style.borderColor = '#10b981';
+      } else {
+        this.style.borderColor = '#dc2626';
+        confirmField.style.borderColor = '#dc2626';
+      }
+    }
+  });
+  
+  document.getElementById('confirmPassword').addEventListener('input', function() {
+    const passwordField = document.getElementById('password');
+    if (this.value.trim() && this.value === passwordField.value) {
+      this.style.borderColor = '#10b981';
+      passwordField.style.borderColor = '#10b981';
+    } else if (this.value.trim()) {
+      this.style.borderColor = '#dc2626';
+      passwordField.style.borderColor = '#dc2626';
+    } else {
+      this.style.borderColor = '#32d0cb';
+    }
+  });
+  
+  form.addEventListener('submit', function(event) {
+    let isValid = true;
+    
+    if (!validateField(document.getElementById('fullname'))) isValid = false;
+    if (!validateEmail(document.getElementById('email'))) isValid = false;
+    if (!validatePhone(document.getElementById('phone'))) isValid = false;
+    if (!validateField(document.getElementById('password'))) isValid = false;
+    if (!validatePasswordMatch(document.getElementById('password'), document.getElementById('confirmPassword'))) isValid = false;
+    
+    if (!isValid) {
+      event.preventDefault();
+      const firstError = document.querySelector('[style*="border-color: #dc2626"]');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });

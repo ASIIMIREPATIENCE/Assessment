@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="login2.css">
+</head>
+
+<style>
+    .form{
+    width: 150px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #179e25;
+    border-radius: 5px;
+    align-items: center;
+}
+
+.form-title{
+    text-align: center;
+    margin-bottom: 20px;
+    font-type: bold;
+    font-family: Arial, sans-serif;
+}
+
+.input{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #2caac0;
+    
+}
+
+.button{
+    width: 105%;
+    padding: 10px;
+    background-color: #23d1de;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signup-link{
+    text-align: center;
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+}
+</style>
+
+<body>
+    <div class="container">
+    <form >
+        <h2 class="form-title">Login</h2>
+        <input type="text" name="username" placeholder="Email or Phone Number" class="input">
+        <input type="password" name="password" placeholder="Password" class="input">
+        <button type="submit" class="button">LOGIN</button>
+        <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>
+    </form>
+    </div>
+</body>
+</html>

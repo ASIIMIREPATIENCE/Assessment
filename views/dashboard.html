@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<style>
+    /* --- Global Reset & Base Layout --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f3f4f6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.dashboard-container {
+    width: 100%;
+    max-width: 1150px;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+}
+
+/* --- Top Section Flex/Grid --- */
+.top-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stats-container {
+    flex: 7;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-card {
+    flex: 5;
+    min-width: 320px;
+}
+
+/* --- Reusable Components: Cards --- */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1.5rem;
+}
+
+.sales-orders-card {
+    height: 192px; /* h-48 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem;
+}
+
+.split-cards-row {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.stock-card {
+    flex: 1;
+    height: 144px; /* h-36 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Typography & Elements inside Cards --- */
+.stat-group {
+    width: 50%;
+}
+
+.padding-left {
+    padding-left: 3rem;
+}
+
+.divider {
+    height: 96px;
+    width: 1px;
+    background-color: #d1d5db;
+}
+
+.stat-number {
+    font-size: 1.65rem;
+    font-weight: 900;
+    color: #000000;
+    letter-spacing: -0.025em;
+}
+
+.stat-label {
+    color: #6b7280;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.text-green {
+    color: #10b981;
+}
+
+.text-red {
+    color: #dc2626;
+}
+
+.large-text {
+    font-size: 2.25rem;
+}
+
+/* --- Form Architecture --- */
+.form-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 1rem;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+    font-size: 0.875rem;
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+.form-input:focus {
+    border-color: #6b7280;
+}
+
+.form-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.form-row .form-input, 
+.upload-btn {
+    flex: 1;
+}
+
+.upload-btn {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-btn:hover {
+    background-color: #f9fafb;
+}
+
+.actions-row {
+    margin-top: 0.5rem;
+}
+
+.btn {
+    flex: 1;
+    border: none;
+    border-radius: 2px;
+    padding: 0.6rem 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-save {
+    background-color: #f17e38;
+    color: #ffffff;
+}
+
+.btn-save:hover {
+    background-color: #e06d27;
+}
+
+.btn-clear {
+    background-color: #cccccc;
+    color: #000000;
+}
+
+.btn-clear:hover {
+    background-color: #bbbbbb;
+}
+
+/* --- Data Table Styling --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #9ca3af;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.inventory-table th {
+    background-color: #000000;
+    color: #ffffff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.65rem;
+    border: 1px solid #9ca3af;
+}
+
+.inventory-table td {
+    color: #000000;
+    padding: 0.5rem;
+    border: 1px solid #9ca3af;
+}
+
+.inventory-table tbody tr:not(.empty-row):hover {
+    background-color: #f9fafb;
+}
+
+.inventory-table .empty-row td {
+    padding: 0.85rem;
+}
+  </style>
+<body>
+
+    <div class="dashboard-container">
+        
+        <div class="top-section">
+            
+            <div class="stats-container">
+                
+                <div class="card sales-orders-card">
+                    <div class="stat-group">
+                        <div class="stat-number">UGX 50,000,000</div>
+                        <div class="stat-label">Sales</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="stat-group padding-left">
+                        <div class="stat-number">UGX 15,000,000</div>
+                        <div class="stat-label">Orders</div>
+                    </div>
+                </div>
+
+                <div class="split-cards-row">
+                    <div class="card stock-card">
+                        <div class="stat-number text-green">UGX 42,000,000</div>
+                        <div class="stat-label">In stock</div>
+                    </div>
+                    <div class="card stock-card">
+                        <div class="stat-number text-red large-text">5</div>
+                        <div class="stat-label">Out of stock</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card form-card">
+                <h3 class="form-title">Add Product</h3>
+                <form class="product-form" onsubmit="event.preventDefault();">
+                    <input type="text" placeholder="Product Name" class="form-input">
+                    <input type="text" placeholder="Category" class="form-input">
+                    <input type="text" placeholder="Price" class="form-input">
+                    <input type="text" placeholder="Quantity" class="form-input">
+                    
+                    <div class="form-row">
+                        <input type="text" placeholder="Color" class="form-input">
+                        <button type="button" class="upload-btn">Upload Image</button>
+                    </div>
+
+                    <div class="form-row actions-row">
+                        <button type="submit" class="btn btn-save">SAVE</button>
+                        <button type="reset" class="btn btn-clear">CLEAR</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">ID</th>
+                        <th style="width: 30%;">Name</th>
+                        <th style="width: 20%;">Category</th>
+                        <th style="width: 20%;">Price (UGX)</th>
+                        <th style="width: 15%;">Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#645341</td>
+                        <td>Sumsang s25+ Ultra</td>
+                        <td>Smart Phones</td>
+                        <td>6,900,000</td>
+                        <td>981</td>
+                    </tr>
+                    <tr>
+                        <td>#645346</td>
+                        <td>Gucci XXL Shirt</td>
+                        <td>Fashion</td>
+                        <td>500,000</td>
+                        <td>100</td>
+                    </tr>
+                    <tr>
+                        <td>#645342</td>
+                        <td>XL Zara Shirt</td>
+                        <td>Fashion</td>
+                        <td>600,000</td>
+                        <td>56</td>
+                    </tr>
+                    <tr>
+                        <td>#645344</td>
+                        <td>iPhone 15</td>
+                        <td>Smart Phones</td>
+                        <td>7,900,000</td>
+                        <td>752</td>
+                    </tr>
+                    <tr>
+                        <td>#645343</td>
+                        <td>Smart home Curtain</td>
+                        <td>Interior Design</td>
+                        <td>500,000</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td>#645345</td>
+                        <td>Spectrum Laptop 14.6 Inc</td>
+                        <td>Laptops</td>
+                        <td>15,800,000</td>
+                        <td>144</td>
+                    </tr>
+                    <tr class="empty-row">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

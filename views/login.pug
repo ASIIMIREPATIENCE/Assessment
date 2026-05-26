@@ -1,0 +1,174 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Login
+  style.
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h2 {
+      font-size: 28px;
+      font-weight: normal;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .field {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #3bd7cf;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    input.error {
+      border-color: #dc2626;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #32d0cb;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: purple;
+    }
+    .signup-link {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .signup-link a {
+      color: #2f87da;
+      text-decoration: none;
+    }
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+    .success-message {
+      background-color: #109a47;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+body
+  .login-box
+    h2 Login
+    
+    if success
+      .success-message #{success}
+    
+    form(id='loginForm' action='/login' method='POST')
+      .field
+        label Email
+        input(type='email' id='email' name='email')
+      
+      .field
+        label Password
+        input(type='password' id='password' name='password')
+      
+      button(type='submit') LOGIN
+      
+      .signup-link
+        | Don't have an account? 
+        a(href='/register') Sign up
+
+script.
+  const form = document.getElementById('loginForm');
+  
+  function clearAllErrors() {
+    const allInputs = document.querySelectorAll('input');
+    allInputs.forEach(input => {
+      input.classList.remove('error');
+    });
+  }
+  
+  function validateEmail(field) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!field.value.trim()) {
+      field.classList.add('error');
+      return false;
+    } else if (!emailRegex.test(field.value.trim())) {
+      field.classList.add('error');
+      return false;
+    } else {
+      field.classList.remove('error');
+      return true;
+    }
+  }
+  
+  function validateField(field) {
+    if (!field.value.trim()) {
+      field.classList.add('error');
+      return false;
+    } else {
+      field.classList.remove('error');
+      return true;
+    }
+  }
+  
+  document.getElementById('email').addEventListener('input', function() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (this.value.trim() && emailRegex.test(this.value.trim())) {
+      this.classList.remove('error');
+    } else if (this.value.trim()) {
+      this.classList.add('error');
+    } else {
+      this.classList.remove('error');
+    }
+  });
+  
+  document.getElementById('password').addEventListener('input', function() {
+    if (this.value.trim()) {
+      this.classList.remove('error');
+    }
+  });
+  
+  form.addEventListener('submit', function(event) {
+    clearAllErrors();
+    
+    let isValid = true;
+    
+    if (!validateEmail(document.getElementById('email'))) isValid = false;
+    if (!validateField(document.getElementById('password'))) isValid = false;
+    
+    if (!isValid) {
+      event.preventDefault();
+      const firstError = document.querySelector('.error');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });

@@ -1,0 +1,504 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Inventory Dashboard
+    link(rel='stylesheet' href='dashboard.css')
+    style.
+      /* --- Global Reset & Base Layout --- */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f3f4f6;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+      .dashboard-container {
+        width: 100%;
+        max-width: 1150px;
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f0f0f0;
+      }
+      /* --- Top Section Flex/Grid --- */
+      .top-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .stats-container {
+        flex: 7;
+        min-width: 320px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .form-card {
+        flex: 5;
+        min-width: 320px;
+      }
+      /* --- Reusable Components: Cards --- */
+      .card {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        padding: 1.5rem;
+      }
+      .sales-orders-card {
+        height: 192px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem;
+      }
+      .split-cards-row {
+        display: flex;
+        gap: 1.5rem;
+      }
+      .stock-card {
+        flex: 1;
+        height: 144px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      /* --- Typography & Elements inside Cards --- */
+      .stat-group {
+        width: 50%;
+      }
+      .padding-left {
+        padding-left: 3rem;
+      }
+      .divider {
+        height: 96px;
+        width: 1px;
+        background-color: #d1d5db;
+      }
+      .stat-number {
+        font-size: 1.65rem;
+        font-weight: 900;
+        color: #000000;
+        letter-spacing: -0.025em;
+      }
+      .stat-label {
+        color: #6b7280;
+        font-weight: 500;
+        margin-top: 0.25rem;
+      }
+      .text-green {
+        color: #10b981;
+      }
+      .text-red {
+        color: #dc2626;
+      }
+      .large-text {
+        font-size: 2.25rem;
+      }
+      /* --- Form Architecture --- */
+      .form-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 1rem;
+      }
+      .product-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .form-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 2px;
+        font-size: 0.875rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .form-input::placeholder {
+        color: #9ca3af;
+      }
+      .form-input:focus {
+        border-color: #6b7280;
+      }
+      /* Error state - only red border, no background change */
+      .form-input.error {
+        border-color: #dc2626;
+      }
+      /* Error state for file input - only red border, no background change */
+      .upload-btn {
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 2px;
+        color: #9ca3af;
+        font-size: 0.875rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+        width: 100%;
+        transition: border-color 0.2s;
+      }
+      .upload-btn:hover {
+        background-color: #f9fafb;
+      }
+      .upload-btn.error {
+        border-color: #dc2626;
+      }
+      .field-error {
+        color: #dc2626;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+      .form-row {
+        display: flex;
+        gap: 0.75rem;
+      }
+      .form-row .form-group {
+        flex: 1;
+      }
+      .actions-row {
+        margin-top: 0.5rem;
+      }
+      .btn {
+        flex: 1;
+        border: none;
+        border-radius: 2px;
+        padding: 0.6rem 0;
+        font-size: 0.875rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .btn-save {
+        background-color: #f17e38;
+        color: #ffffff;
+      }
+      .btn-save:hover {
+        background-color: #e06d27;
+      }
+      .btn-clear {
+        background-color: #cccccc;
+        color: #000000;
+      }
+      .btn-clear:hover {
+        background-color: #bbbbbb;
+      }
+      /* --- Data Table Styling --- */
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #9ca3af;
+      }
+      .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+        text-align: center;
+      }
+      .inventory-table th {
+        background-color: #000000;
+        color: #ffffff;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.65rem;
+        border: 1px solid #9ca3af;
+      }
+      .inventory-table td {
+        color: #000000;
+        padding: 0.5rem;
+        border: 1px solid #9ca3af;
+      }
+      .inventory-table tbody tr:not(.empty-row):hover {
+        background-color: #f9fafb;
+      }
+      .inventory-table .empty-row td {
+        padding: 0.85rem;
+      }
+      /* --- Message Styles inside Form Card --- */
+      .success-message {
+        background-color: #10b981;
+        color: #ffffff;
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+      }
+      .error-message {
+        background-color: #fee2e2;
+        color: #dc2626;
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 0.875rem;
+        border-left: 4px solid #dc2626;
+        font-weight: 500;
+      }
+
+  body
+    .dashboard-container
+      .top-section
+        .stats-container
+          .card.sales-orders-card
+            .stat-group
+              .stat-number UGX 50,000,000
+              .stat-label Sales
+            .divider
+            .stat-group.padding-left
+              .stat-number UGX 15,000,000
+              .stat-label Orders
+          .split-cards-row
+            .card.stock-card
+              .stat-number.text-green UGX #{totalStockValue.toLocaleString()}
+              .stat-label In stock
+            .card.stock-card
+              .stat-number.text-red.large-text 5
+              .stat-label Out of stock
+        .card.form-card
+          // Success message at the top (inside card, above title)
+          if success
+            .success-message
+              span #{success}
+          
+          // Error message inside the card
+          if error
+            .error-message
+              span #{error}
+          
+          h3.form-title Add Product
+          
+          form.product-form(id='productForm' action='/add-product' method='POST' enctype='multipart/form-data')
+            .form-group
+              input.form-input(type='text' id='productName' name='productName' placeholder='Product Name')
+              .field-error(id='productNameError')
+            
+            .form-group
+              input.form-input(type='text' id='category' name='category' placeholder='Category')
+              .field-error(id='categoryError')
+            
+            .form-group
+              input.form-input(type='number' id='price' name='price' placeholder='Price')
+              .field-error(id='priceError')
+            
+            .form-group
+              input.form-input(type='number' id='quantity' name='quantity' placeholder='Quantity')
+              .field-error(id='quantityError')
+            
+            .form-row
+              .form-group
+                input.form-input(type='text' id='color' name='color' placeholder='Color')
+                .field-error(id='colorError')
+              .form-group
+                input.upload-btn(type='file' id='productImage' name='productImage' accept='image/*')
+                .field-error(id='imageError')
+            
+            .form-row.actions-row
+              button.btn.btn-save(type='submit') SAVE
+              button.btn.btn-clear(type='reset') CLEAR
+
+      .table-container
+        table.inventory-table
+          thead
+            tr
+              th(style='width: 15%;') ID
+              th(style='width: 30%;') Name
+              th(style='width: 20%;') Category
+              th(style='width: 20%;') Price (UGX)
+              th(style='width: 15%;') Quantity
+          tbody
+            if products && products.length > 0
+              each product in products
+                tr
+                  td #{product._id.toString().slice(-6)}
+                  td #{product.productName}
+                  td #{product.category}
+                  td #{product.price.toLocaleString()}
+                  td #{product.quantity}
+            else
+              tr
+                td #645341
+                td Sumsang s25+ Ultra
+                td Smart Phones
+                td 6,900,000
+                td 981
+              tr
+                td #645346
+                td Gucci XXL Shirt
+                td Fashion
+                td 500,000
+                td 100
+              tr
+                td #645342
+                td XL Zara Shirt
+                td Fashion
+                td 600,000
+                td 56
+              tr
+                td #645344
+                td iPhone 15
+                td Smart Phones
+                td 7,900,000
+                td 752
+              tr
+                td #645343
+                td Smart home Curtain
+                td Interior Design
+                td 500,000
+                td 30
+              tr
+                td #645345
+                td Spectrum Laptop 14.6 Inc
+                td Laptops
+                td 15,800,000
+                td 144
+
+  // Client-side validation script
+  script.
+    const form = document.getElementById('productForm');
+    
+    // Clear all previous errors
+    function clearAllErrors() {
+      const allTextInputs = document.querySelectorAll('.form-input');
+      const fileInput = document.getElementById('productImage');
+      const allErrorFields = document.querySelectorAll('.field-error');
+      
+      allTextInputs.forEach(input => {
+        input.classList.remove('error');
+      });
+      
+      if (fileInput) {
+        fileInput.classList.remove('error');
+      }
+      
+      allErrorFields.forEach(errorField => {
+        errorField.textContent = '';
+      });
+    }
+    
+    // Validate text field (required)
+    function validateTextField(field, errorField) {
+      if (!field.value.trim()) {
+        field.classList.add('error');
+        errorField.textContent = 'Invalid field';
+        return false;
+      } else {
+        field.classList.remove('error');
+        errorField.textContent = '';
+        return true;
+      }
+    }
+    
+    // Validate number field (required and > 0)
+    function validateNumberField(field, errorField) {
+      const value = parseFloat(field.value);
+      if (!field.value.trim()) {
+        field.classList.add('error');
+        errorField.textContent = 'Invalid field';
+        return false;
+      } else if (isNaN(value) || value <= 0) {
+        field.classList.add('error');
+        errorField.textContent = 'Invalid field';
+        return false;
+      } else {
+        field.classList.remove('error');
+        errorField.textContent = '';
+        return true;
+      }
+    }
+    
+    // Validate file field (required)
+    function validateFileField(field, errorField) {
+      if (field.files.length === 0) {
+        field.classList.add('error');
+        errorField.textContent = 'Invalid field';
+        return false;
+      } else {
+        field.classList.remove('error');
+        errorField.textContent = '';
+        return true;
+      }
+    }
+    
+    // Form submission validation
+    form.addEventListener('submit', function(event) {
+      // Clear all previous errors first
+      clearAllErrors();
+      
+      let isValid = true;
+      
+      // Validate Product Name
+      if (!validateTextField(document.getElementById('productName'), document.getElementById('productNameError'))) {
+        isValid = false;
+      }
+      
+      // Validate Category
+      if (!validateTextField(document.getElementById('category'), document.getElementById('categoryError'))) {
+        isValid = false;
+      }
+      
+      // Validate Price
+      if (!validateNumberField(document.getElementById('price'), document.getElementById('priceError'))) {
+        isValid = false;
+      }
+      
+      // Validate Quantity
+      if (!validateNumberField(document.getElementById('quantity'), document.getElementById('quantityError'))) {
+        isValid = false;
+      }
+      
+      // Validate Color
+      if (!validateTextField(document.getElementById('color'), document.getElementById('colorError'))) {
+        isValid = false;
+      }
+      
+      // Validate Image
+      if (!validateFileField(document.getElementById('productImage'), document.getElementById('imageError'))) {
+        isValid = false;
+      }
+      
+      // If form is invalid, prevent submission and scroll to form card
+      if (!isValid) {
+        event.preventDefault();
+        document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    
+    // Clear button resets all errors
+    document.querySelector('.btn-clear').addEventListener('click', function() {
+      setTimeout(() => {
+        clearAllErrors();
+        document.getElementById('productImage').value = '';
+      }, 100);
+    });
+    
+    // Auto-hide success message after 5 seconds
+    setTimeout(function() {
+      const successMsg = document.querySelector('.success-message');
+      if (successMsg) {
+        setTimeout(function() {
+          successMsg.style.display = 'none';
+        }, 5000);
+      }
+    }, 100);
